@@ -29,16 +29,18 @@ int GicConfigure(u16 DeviceId);
 void ServiceRoutine(void *CallbackRef); //
 void DataRead(char filename[], FATFS fatfs, TCHAR Path, FIL fil, u32 buffer[], u32 data_size, u32 NumBytesRead);
 /************ SD card parameters ************/
+//tftlcd를 위한 전역변수 시작
 static FATFS fatfs;
 static FIL fil;
-static char filename[32] = "lenna.bin";
-static char board[32] = "board.bin"
-static char general[32] = "general.bin"
-static char merchant[32]  = "merchant.bin"
-static char king[32] = "king.bin"
-static char prince[32] = "prince.bin"
-static char setting[32] = "setting.bin"
-static char ending[32] = "ending.bin"
+static char board[32] = "board.bin";
+static char blank[32] = "black.bin"
+static char general[32] = "general.bin";
+static char merchant[32]  = "merchant.bin";
+static char king[32] = "king.bin";
+static char prince[32] = "prince.bin";
+static char hoo[32] = "hoo.bin";
+static char setting[32] = "setting.bin";
+static char ending[32] = "ending.bin";
 
 FRESULT Res;
 TCHAR *Path = "0:/";
@@ -49,9 +51,9 @@ u32 *buffer2[1800];
 u32 data_size2 = 4*1800;
 
 u32 *buffer3[450];
-u32 data_size3 = 4*450
-u32 * buffer
+u32 data_size3 = 4*450;
 u32 NumBytesRead;
+//여기까지 tftlcd를 위한 전역변수
 typedef struct board_pos
 {
 	int small1_x = 6;
@@ -151,20 +153,51 @@ int main(void)
 	 *  Run the Gic configure, specify the Device ID generated in xparameters.h
 	 */
 	/*********************SD card read*********************/
-	DataRead(filename, fatfs, Path, fil, buffer, data_size, NumBytesRead)
-	DataRead(board, fatfs, Path, fil, buffer, data_size, NumBytesRead)
-	DataRead(general, fatfs, Path, fil, buffer, data_size, NumBytesRead)
-	DataRead(x, fatfs, Path, fil, buffer, data_size, NumBytesRead)
-	DataRead(mainscreen, fatfs, Path, fil, buffer, data_size, NumBytesRead)
-	DataRead(setting, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+
+	DataRead(board, fatfs, Path, fil, buffer, data_size, NumBytesRead);
+	DataRead(general, fatfs, Path, fil, buffer, data_size, NumBytesRead);
+	DataRead(x, fatfs, Path, fil, buffer, data_size, NumBytesRead);
+	DataRead(mainscreen, fatfs, Path, fil, buffer, data_size, NumBytesRead);
+	DataRead(setting, fatfs, Path, fil, buffer, data_size, NumBytesRead);
 
 	Status = GicConfigure(INTC_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
 		xil_printf("GIC Configure Failed\r\n");
 		return XST_FAILURE;
 	}
-
+	DataRead(filename, fatfs, Path, fil, buffer, data_size, NumBytesRead); // 항상 동작해야하는 코드
 	while(TRUE){
+
+	int Data;
+    int R;
+    int G;
+    int B;
+    /****************************TFT-LCD write(RGB565)****************************/
+    for (int i = 0; i < 272; i++){
+
+	
+    	for (int j = 0; j < 240; j++){
+    		// 1
+			Data = (int)buffer[j + 240*i] & 0x0000ffff;
+			//xil_printf("1. Data:%08x\n", Data);
+			R = (Data >> 11) & 0x0000001f;
+			G = Data & 0x000007E0;
+			B = Data & 0x0000001f;
+			Data = (B<<11)| G | R;
+			//xil_printf("2. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
+			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (2*j + 480*i)*4, Data);
+
+			// 2
+			Data = (int)buffer[j + 240*i] >> 16;
+			//xil_printf("3. Data:%08x\n", Data);
+			R = (Data >> 11) & 0x0000001f;
+			G = Data & 0x000007E0;
+			B = Data & 0x0000001f;
+			Data = (B<<11)| G | R;
+			//xil_printf("4. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
+			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (1 + 2*j + 480*i)*4, Data);
+    	}
+    }
 
 
 
@@ -295,34 +328,13 @@ void ServiceRoutine(void *CallbackRef)
 
 	PUSHBUTTON_mWriteReg(XPAR_PUSHBUTTON_0_S00_AXI_BASEADDR, 0, 0);
 
+	aa=0b11111110000;
+	int state=0;
 	if (((pb & 1) == 1)&&((pb & 16) == 1)){
 		xil_printf("S1 Switch is pushed\r\n");
 
 
-	}
-	else if (((pb & 2) == 2)&&((pb & 16) == 1)){
-		xil_printf("S2 Switch is pushed\r\n");
-
-
-	}
-	else if (((pb & 4) == 4)&&((pb & 16) == 1)){
-		xil_printf("S3 Switch is pushed\r\n");
-	}
-	else if (((pb & 8) == 8)&&((pb & 16) == 1)){
-		xil_printf("S4 Switch is pushed\r\n");
-	}
-	else if (((pb & 1) == 2)&&((pb & 32) == 1)){
-		xil_printf("S2 Switch is pushed\r\n");
-	}
-	else if (((pb & 2) == 4)&&((pb & 32) == 1)){
-		xil_printf("S3 Switch is pushed\r\n");
-	}
-	else if (((pb & 4) == 8)&&((pb & 32) == 1)){
-		xil_printf("S4 Switch is pushed\r\n");
-	}
-	else if (((pb & 8) == 8)&&((pb & 32) == 1)){
-		xil_printf("S4 Switch is pushed\r\n");
-	}
+	
 }
 void WriteTLCDReg(char *pRegVal, int val) //pRegVal�� 16Byte�� �迭
 {
@@ -382,7 +394,8 @@ int ReadRTC(XIicPs Iic, u8 *SendBuffer, u8 *RecvBuffer)
 	return XST_SUCCESS;
 }
 
-void DataRead(filename,fatfs,Path,fil,buffer,data_size,NumBytesRead){
+void DataRead(char filename, FATFS fatfs,TCHAR *Path,FIL fil, u32 *buffer,u32 data_size, u32 NumBytesRead){
+	//filename을 줘서 buffer 포인터에 파일을 넣어준다
 	NumBytesRead = 0;
 
 	Res = f_mount(&fatfs, Path, 0);
@@ -413,39 +426,11 @@ void DataRead(filename,fatfs,Path,fil,buffer,data_size,NumBytesRead){
 
 	xil_printf("file_read_success\n");
 
-	
-    int Data;
-    int R;
-    int G;
-    int B;
-    /****************************TFT-LCD write(RGB565)****************************/
-    for (int i = 0; i < 272; i++){
 
-	
-    	for (int j = 0; j < 240; j++){
-    		// 1
-			Data = (int)buffer[j + 240*i] & 0x0000ffff;
-			//xil_printf("1. Data:%08x\n", Data);
-			R = (Data >> 11) & 0x0000001f;
-			G = Data & 0x000007E0;
-			B = Data & 0x0000001f;
-			Data = (B<<11)| G | R;
-			//xil_printf("2. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
-			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (2*j + 480*i)*4, Data);
-
-			// 2
-			Data = (int)buffer[j + 240*i] >> 16;
-			//xil_printf("3. Data:%08x\n", Data);
-			R = (Data >> 11) & 0x0000001f;
-			G = Data & 0x000007E0;
-			B = Data & 0x0000001f;
-			Data = (B<<11)| G | R;
-			//xil_printf("4. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
-			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (1 + 2*j + 480*i)*4, Data);
-    	}
-    }
 
 
     return 0;
 
 }
+
+void buffer_masking(){}
