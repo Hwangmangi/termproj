@@ -20,56 +20,165 @@
 
 #define	IIC_SLAVE_ADDR	0x51
 #define	IIC_SCLK_RATE	100000
-
-
-
 #define INTC_DEVICE_ID		XPAR_SCUGIC_0_DEVICE_ID
 #define INTC_DEVICE_INT_ID	31
 
 void	WriteTLCDReg(char *pRegVal, int val);
 int		ReadRTC(XIicPs Iic, u8 *SendBuffer, u8 *RecvBuffer);
-
 int GicConfigure(u16 DeviceId);
 void ServiceRoutine(void *CallbackRef); //
+void DataRead(char filename[], FATFS fatfs, TCHAR Path, FIL fil, u32 buffer[], u32 data_size, u32 NumBytesRead);
 /************ SD card parameters ************/
 static FATFS fatfs;
 static FIL fil;
 static char filename[32] = "lenna.bin";
+static char board[32] = "board.bin"
+static char general[32] = "general.bin"
+static char merchant[32]  = "merchant.bin"
+static char king[32] = "king.bin"
+static char prince[32] = "prince.bin"
+static char setting[32] = "setting.bin"
+static char ending[32] = "ending.bin"
+
 FRESULT Res;
 TCHAR *Path = "0:/";
 u32 * buffer[65280];
 u32 data_size = 4 * 65280; // 4byte * buffer_size
+
+u32 *buffer2[1800];
+u32 data_size2 = 4*1800;
+
+u32 *buffer3[450];
+u32 data_size3 = 4*450
+u32 * buffer
 u32 NumBytesRead;
+typedef struct board_pos
+{
+	int small1_x = 6;
+	int small2_x = 6;
+	int small3_x = 6;
+	int small4_x = 427; 
+	int small5_x = 427;
+	int small6_x = 427;
+
+	int pos1_x = 81;
+	int pos2_x = 163;
+	int pos3_x = 243;
+	int pos4_x = 327;
+
+	int pos5_x = 81;
+	int pos6_x = 163;
+	int pos7_x = 243;
+	int pos8_x = 327;
+
+	int pos9_x = 81;
+	int pos10_x = 163;
+	int pos11_x = 243;
+	int pos12_x = 327;
+
+	int small1_y = 151;
+	int small2_y = 151;
+	int small3_y = 151;
+	int small4_y = 29;
+	int small5_y = 29;
+	int small6_y = 29;
+
+	int pos1_y = 35;
+	int pos2_y = 35;
+	int pos3_y = 35;
+	int pos4_y = 35;
+
+	int pos5_y = 108;
+	int pos6_y = 108;
+	int pos7_y = 108;
+	int pos8_y = 108;
+
+	int pos9_y = 180;
+	int pos10_y = 180;
+	int pos11_y = 180;
+	int pos12_y = 180;
+
+	
+}board_pos;
+/*
+--------------------------------------------------------------------------------------------
+|                |          |         |         |         |
+|                | pos1     | pos2    | pos3    | pos4    |       small4
+|                |          |         |         |         |       small5
+|                |          |         |         |         |       small6
+|                |----------|---------|---------|---------|
+|                |          |         |         |         |
+|                | pos5     | pos6    | pos7    | pos8    |
+|                |          |         |         |         |
+|                |          |         |         |         |
+|  small1        |----------|---------|---------|---------|
+|  small2        |          |         |         |         |
+|  small3        | pos9     | pos10   | pos11   | pos12   |
+|                |          |         |         |         |
+|                |          |         |         |         |
+---------------------------------------------------------------------------------------------
+
+*/
 
 
 XScuGic InterruptController; 	     // Instance of the Interrupt Controller
 static XScuGic_Config *GicConfig;    // The configuration parameters of the controller
 
-int main(void)
-{
-	int Status;
 
-	xil_printf("Interrupt Test\r\n");
+
+
+int main(void)
+{	//interrupt ë³€ìˆ˜
+	int Status;
+	//textlcd, sevenseë³€ìˆ˜
+	XIicPs	Iic;			/**< Instance of the IIC Device */
+	int 	IicStatus;
+	u8		*SendBuffer;	/**< Buffer for Transmitting Data ï¿½ï¿½ 8bit*/
+	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   ï¿½ï¿½ 24bit*/
+
+	int		SegReg;
+	char	TlcdReg_upline[16];
+	char	TlcdReg_downline[16];
+
+	int		i;
+	int		wait;
+
+	NumBytesRead = 0;
+
+	//xil_printf("Interrupt Test\r\n");
 
 	/*
 	 *  Run the Gic configure, specify the Device ID generated in xparameters.h
 	 */
+	/*********************SD card read*********************/
+	DataRead(filename, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+	DataRead(board, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+	DataRead(general, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+	DataRead(x, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+	DataRead(mainscreen, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+	DataRead(setting, fatfs, Path, fil, buffer, data_size, NumBytesRead)
+
 	Status = GicConfigure(INTC_DEVICE_ID);
 	if (Status != XST_SUCCESS) {
 		xil_printf("GIC Configure Failed\r\n");
 		return XST_FAILURE;
 	}
 
-	while(TRUE){}	// Main loop
+	while(TRUE){
+
+
+
+
+	}	// Main loop
 
 	return XST_SUCCESS;
 }
-void main2(void)
+void main_textlcd_sevenseg(void)
 {
 	XIicPs	Iic;			/**< Instance of the IIC Device */
 	int 	IicStatus;
-	u8		*SendBuffer;	/**< Buffer for Transmitting Data ÃÑ 8bit*/
-	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   ÃÑ 24bit*/
+	u8		*SendBuffer;	/**< Buffer for Transmitting Data ï¿½ï¿½ 8bit*/
+	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   ï¿½ï¿½ 24bit*/
 
 	int		SegReg;
 	char	TlcdReg_upline[16];
@@ -83,8 +192,8 @@ void main2(void)
 
 	while(TRUE)
 	{
-		IicStatus = ReadRTC(Iic, SendBuffer, RecvBuffer);//¹«½¼ °´Ã¼°ª, 8bit, 24bitµé¾î°¨
-		//ÀÌ°Ç 32bit Á¤¼ö°ª, peripheral »óÅÂ°ªÀÎµí
+		IicStatus = ReadRTC(Iic, SendBuffer, RecvBuffer);//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½, 8bit, 24bitï¿½ï¿½î°¨
+		//ï¿½Ì°ï¿½ 32bit ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, peripheral ï¿½ï¿½ï¿½Â°ï¿½ï¿½Îµï¿½
 		if (IicStatus != XST_SUCCESS)
 		{
 			return XST_FAILURE;
@@ -115,72 +224,16 @@ void main2(void)
 		for(wait = 0; wait < 1200; wait++);
 	}
 }
-
-void main3()
+void main_tftlcd()
 {
     NumBytesRead = 0;
-/*********************SD card read*********************/
-	Res = f_mount(&fatfs, Path, 0);
-    if(Res != FR_OK){
-    	xil_printf("mount_fail\n");
-    	return 0;
-    }
-
-    Res = f_open(&fil, filename, FA_READ);
-    if(Res){
-        xil_printf("file_open_fail\n");
-        return 0;
-    }
-
-    Res = f_lseek(&fil, 0);
-    if (Res) {
-    	xil_printf("fseek_fail\n");
-    	return 0;
-    }
-
-    Res = f_read(&fil, buffer, data_size, &NumBytesRead);
-    if(Res){
-        xil_printf("data_read_fail\n");
-        return 0;
-    }
-
-    Res = f_close(&fil);
-
-	xil_printf("file_read_success\n");
 
 
-    int Data;
-    int R;
-    int G;
-    int B;
-    /****************************TFT-LCD write(RGB565)****************************/
-    for (int i = 0; i < 272; i++){
-    	for (int j = 0; j < 240; j++){
-    		// 1
-			Data = (int)buffer[j + 240*i] & 0x0000ffff;
-			//xil_printf("1. Data:%08x\n", Data);
-			R = (Data >> 11) & 0x0000001f;
-			G = Data & 0x000007E0;
-			B = Data & 0x0000001f;
-			Data = (B<<11)| G | R;
-			//xil_printf("2. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
-			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (2*j + 480*i)*4, Data);
+    
 
-			// 2
-			Data = (int)buffer[j + 240*i] >> 16;
-			//xil_printf("3. Data:%08x\n", Data);
-			R = (Data >> 11) & 0x0000001f;
-			G = Data & 0x000007E0;
-			B = Data & 0x0000001f;
-			Data = (B<<11)| G | R;
-			//xil_printf("4. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
-			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (1 + 2*j + 480*i)*4, Data);
-    	}
-    }
-
-
-    return 0;
 }
+
+
 int GicConfigure(u16 DeviceId)
 {
 	int Status;
@@ -234,7 +287,6 @@ int GicConfigure(u16 DeviceId)
 
 	return XST_SUCCESS;
 }
-
 void ServiceRoutine(void *CallbackRef)
 {
 	char pb;
@@ -243,20 +295,36 @@ void ServiceRoutine(void *CallbackRef)
 
 	PUSHBUTTON_mWriteReg(XPAR_PUSHBUTTON_0_S00_AXI_BASEADDR, 0, 0);
 
-	if ((pb & 1) == 1){
+	if (((pb & 1) == 1)&&((pb & 16) == 1)){
 		xil_printf("S1 Switch is pushed\r\n");
+
+
 	}
-	else if ((pb & 2) == 2){
+	else if (((pb & 2) == 2)&&((pb & 16) == 1)){
 		xil_printf("S2 Switch is pushed\r\n");
+
+
 	}
-	else if ((pb & 4) == 4){
+	else if (((pb & 4) == 4)&&((pb & 16) == 1)){
 		xil_printf("S3 Switch is pushed\r\n");
 	}
-	else if ((pb & 8) == 8){
+	else if (((pb & 8) == 8)&&((pb & 16) == 1)){
+		xil_printf("S4 Switch is pushed\r\n");
+	}
+	else if (((pb & 1) == 2)&&((pb & 32) == 1)){
+		xil_printf("S2 Switch is pushed\r\n");
+	}
+	else if (((pb & 2) == 4)&&((pb & 32) == 1)){
+		xil_printf("S3 Switch is pushed\r\n");
+	}
+	else if (((pb & 4) == 8)&&((pb & 32) == 1)){
+		xil_printf("S4 Switch is pushed\r\n");
+	}
+	else if (((pb & 8) == 8)&&((pb & 32) == 1)){
 		xil_printf("S4 Switch is pushed\r\n");
 	}
 }
-void WriteTLCDReg(char *pRegVal, int val) //pRegValÀº 16ByteÀÇ ¹è¿­
+void WriteTLCDReg(char *pRegVal, int val) //pRegValï¿½ï¿½ 16Byteï¿½ï¿½ ï¿½è¿­
 {
 	int		i = 0;
 	char	temp;
@@ -314,3 +382,70 @@ int ReadRTC(XIicPs Iic, u8 *SendBuffer, u8 *RecvBuffer)
 	return XST_SUCCESS;
 }
 
+void DataRead(filename,fatfs,Path,fil,buffer,data_size,NumBytesRead){
+	NumBytesRead = 0;
+
+	Res = f_mount(&fatfs, Path, 0);
+    if(Res != FR_OK){
+    	xil_printf("mount_fail\n");
+    	return 0;
+    }
+
+    Res = f_open(&fil, filename, FA_READ);
+    if(Res){
+        xil_printf("file_open_fail\n");
+        return 0;
+    }
+
+    Res = f_lseek(&fil, 0);
+    if (Res) {
+    	xil_printf("fseek_fail\n");
+    	return 0;
+    }
+
+    Res = f_read(&fil, buffer, data_size, &NumBytesRead);
+    if(Res){
+        xil_printf("data_read_fail\n");
+        return 0;
+    }
+
+    Res = f_close(&fil);
+
+	xil_printf("file_read_success\n");
+
+	
+    int Data;
+    int R;
+    int G;
+    int B;
+    /****************************TFT-LCD write(RGB565)****************************/
+    for (int i = 0; i < 272; i++){
+
+	
+    	for (int j = 0; j < 240; j++){
+    		// 1
+			Data = (int)buffer[j + 240*i] & 0x0000ffff;
+			//xil_printf("1. Data:%08x\n", Data);
+			R = (Data >> 11) & 0x0000001f;
+			G = Data & 0x000007E0;
+			B = Data & 0x0000001f;
+			Data = (B<<11)| G | R;
+			//xil_printf("2. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
+			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (2*j + 480*i)*4, Data);
+
+			// 2
+			Data = (int)buffer[j + 240*i] >> 16;
+			//xil_printf("3. Data:%08x\n", Data);
+			R = (Data >> 11) & 0x0000001f;
+			G = Data & 0x000007E0;
+			B = Data & 0x0000001f;
+			Data = (B<<11)| G | R;
+			//xil_printf("4. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
+			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (1 + 2*j + 480*i)*4, Data);
+    	}
+    }
+
+
+    return 0;
+
+}
