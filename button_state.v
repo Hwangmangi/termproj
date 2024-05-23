@@ -25,7 +25,7 @@ begin
                     nextstate = WC;
                 else
                     nextstate = currentstate;
-                state = nextstate; // 출력으로 현재 state를 받는다
+                //state = nextstate; // 출력으로 현재 state를 받는다
                     
                end
         WP : begin
@@ -33,7 +33,7 @@ begin
                     nextstate=PD;
                 else 
                     nextstate=currentstate;
-                state = nextstate;
+                //state = nextstate;
                     
               end
         PD : begin
@@ -41,14 +41,14 @@ begin
                     nextstate=POC;
                 else 
                     nextstate=currentstate;
-                state = nextstate;
+                //state = nextstate;
               end
         WC : begin
                 if((&control)==1)
                     nextstate=CP;
                 else 
                     nextstate=currentstate;
-                state = nextstate;
+                //state = nextstate;
                     
               end
         CP : begin
@@ -56,21 +56,23 @@ begin
                     nextstate=POC;
                 else 
                     nextstate=currentstate;
-                state = nextstate;
+                //state = nextstate;
               end
         default : begin
-                    nextstate=IDLE;
-                    beverage=1'b0;
+                    nextstate=POC;
                   end
     endcase
 end
     always @(posedge clk or negedge rst_n)
     begin
         if(rst_n==1'b0)
-            currentstate<=IDLE;
+            currentstate<=POC;
         else
             currentstate<=nextstate;
+            
     end
+    always @(posedge clk or negedge rst_n)
+        state = currentstate;
  endmodule
  
               
