@@ -16,7 +16,7 @@
 #include "xparameters.h"
 #include "ff.h"
 
-
+#include "button_moore.h"
 
 #define	IIC_SLAVE_ADDR	0x51
 #define	IIC_SCLK_RATE	100000
@@ -29,7 +29,7 @@ int GicConfigure(u16 DeviceId);
 void ServiceRoutine(void *CallbackRef); //
 void DataRead(char filename[], FATFS fatfs, TCHAR Path, FIL fil, u32 buffer[], u32 data_size, u32 NumBytesRead);
 /************ SD card parameters ************/
-//tftlcd를 위한 전역변수 시작
+//tftlcd瑜� �쐞�븳 �쟾�뿭蹂��닔 �떆�옉
 static FATFS fatfs;
 static FIL fil;
 static char board[32] = "board.bin";
@@ -53,7 +53,9 @@ u32 data_size2 = 4*1800;
 u32 *buffer3[450];
 u32 data_size3 = 4*450;
 u32 NumBytesRead;
-//여기까지 tftlcd를 위한 전역변수
+//�뿬湲곌퉴吏� tftlcd瑜� �쐞�븳 �쟾�뿭蹂��닔
+int *button_state = 0;
+//0: 留�,�룷濡쒖꽑�깮 �긽�깭, 1:留먯꽑�깮�긽�깭, 2:諛⑺뼢�꽑�깮 �긽�깭, 3:蹂대뱶�쐞移� �꽑�깮�긽�깭
 typedef struct board_pos
 {
 	int small1_x = 6;
@@ -99,7 +101,28 @@ typedef struct board_pos
 	int pos10_y = 180;
 	int pos11_y = 180;
 	int pos12_y = 180;
+	//0: None, 1: king, 2:general, 3:merchant, 4:prince, 5:hoo
+	int small1 = 0;
+	int small2 = 0;
+	int small3 = 0;
+	int small4 = 0;
+	int small5 = 0;
+	int small6 = 0;
 
+	int pos1 = 0;
+	int pos2 = 0;
+	int pos3 = 0;
+	int pos4 = 0;
+
+	int pos5 = 0;
+	int pos6 = 0;
+	int pos7 = 0;
+	int pos8 = 0;
+
+	int pos9 = 0;
+	int pos10 = 0;
+	int pos11 = 0;
+	int pos12 = 0;
 	
 }board_pos;
 /*
@@ -130,13 +153,13 @@ static XScuGic_Config *GicConfig;    // The configuration parameters of the cont
 
 
 int main(void)
-{	//interrupt 변수
+{	//interrupt 蹂��닔
 	int Status;
-	//textlcd, sevense변수
+	//textlcd, sevense蹂��닔
 	XIicPs	Iic;			/**< Instance of the IIC Device */
 	int 	IicStatus;
-	u8		*SendBuffer;	/**< Buffer for Transmitting Data �� 8bit*/
-	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   �� 24bit*/
+	u8		*SendBuffer;	/**< Buffer for Transmitting Data 占쏙옙 8bit*/
+	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   占쏙옙 24bit*/
 
 	int		SegReg;
 	char	TlcdReg_upline[16];
@@ -165,7 +188,7 @@ int main(void)
 		xil_printf("GIC Configure Failed\r\n");
 		return XST_FAILURE;
 	}
-	DataRead(filename, fatfs, Path, fil, buffer, data_size, NumBytesRead); // 항상 동작해야하는 코드
+	DataRead(filename, fatfs, Path, fil, buffer, data_size, NumBytesRead); // �빆�긽 �룞�옉�빐�빞�븯�뒗 肄붾뱶
 	while(TRUE){
 
 	int Data;
@@ -210,8 +233,8 @@ void main_textlcd_sevenseg(void)
 {
 	XIicPs	Iic;			/**< Instance of the IIC Device */
 	int 	IicStatus;
-	u8		*SendBuffer;	/**< Buffer for Transmitting Data �� 8bit*/
-	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   �� 24bit*/
+	u8		*SendBuffer;	/**< Buffer for Transmitting Data 占쏙옙 8bit*/
+	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   占쏙옙 24bit*/
 
 	int		SegReg;
 	char	TlcdReg_upline[16];
@@ -225,8 +248,8 @@ void main_textlcd_sevenseg(void)
 
 	while(TRUE)
 	{
-		IicStatus = ReadRTC(Iic, SendBuffer, RecvBuffer);//���� ��ü��, 8bit, 24bit��
-		//�̰� 32bit ������, peripheral ���°��ε�
+		IicStatus = ReadRTC(Iic, SendBuffer, RecvBuffer);//占쏙옙占쏙옙 占쏙옙체占쏙옙, 8bit, 24bit占쏙옙載�
+		//占싱곤옙 32bit 占쏙옙占쏙옙占쏙옙, peripheral 占쏙옙占승곤옙占싸듸옙
 		if (IicStatus != XST_SUCCESS)
 		{
 			return XST_FAILURE;
@@ -322,13 +345,50 @@ int GicConfigure(u16 DeviceId)
 }
 void ServiceRoutine(void *CallbackRef)
 {
-	char pb;
-
+	int pb;
+	char state;
+	char pb_copy_sw;
+    char pb_copy_bt;
+	a= *button_state;
 	pb = PUSHBUTTON_mReadReg(XPAR_PUSHBUTTON_0_S00_AXI_BASEADDR, 0);
 
 	PUSHBUTTON_mWriteReg(XPAR_PUSHBUTTON_0_S00_AXI_BASEADDR, 0, 0);
+	//여기서 0을 데이터 값으로 줘서 눌렸다는것을 알려줫다
+	state = BUTTON_MOORE_mReadReg(XPAR_BUTTON_MOORE_0_S00_AXI_BASEADDR, 0);
+	//BUTTON_MOORE_mWriteReg(XPAR_BUTTON_MOORE_0_S00_AXI_BASEADDR, 0, 0);
 
-	aa=0b11111110000;
+	pb_copy_sw=pb>>4;
+	pb_copy_bt=0x0f&pb;
+
+	switch (pb_copy_sw)
+	{
+	case 0x7f:
+		break;
+	
+	case 0x7e:
+		break;
+	
+	case 0x7d:
+		break;
+	
+	case 0x7b:
+		break;
+	
+	case 0x77:
+		break;
+	
+	case 0x6f:
+		break;
+	
+	case 0x5f:
+		break;
+	
+	case 0x3f:
+		break;
+	
+	default:
+		break;
+	}
 	int state=0;
 	if (((pb & 1) == 1)&&((pb & 16) == 1)){
 		xil_printf("S1 Switch is pushed\r\n");
@@ -336,7 +396,7 @@ void ServiceRoutine(void *CallbackRef)
 
 	
 }
-void WriteTLCDReg(char *pRegVal, int val) //pRegVal�� 16Byte�� �迭
+void WriteTLCDReg(char *pRegVal, int val) //pRegVal占쏙옙 16Byte占쏙옙 占썼열
 {
 	int		i = 0;
 	char	temp;
@@ -395,7 +455,7 @@ int ReadRTC(XIicPs Iic, u8 *SendBuffer, u8 *RecvBuffer)
 }
 
 void DataRead(char filename, FATFS fatfs,TCHAR *Path,FIL fil, u32 *buffer,u32 data_size, u32 NumBytesRead){
-	//filename을 줘서 buffer 포인터에 파일을 넣어준다
+	//filename�쓣 以섏꽌 buffer �룷�씤�꽣�뿉 �뙆�씪�쓣 �꽔�뼱以��떎
 	NumBytesRead = 0;
 
 	Res = f_mount(&fatfs, Path, 0);
