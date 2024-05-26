@@ -58,87 +58,87 @@ int *button_state = 0;
 //0: 留�,�룷濡쒖꽑�깮 �긽�깭, 1:留먯꽑�깮�긽�깭, 2:諛⑺뼢�꽑�깮 �긽�깭, 3:蹂대뱶�쐞移� �꽑�깮�긽�깭
 typedef struct board_pos
 {
-	int small1_x = 6;
-	int small2_x = 6;
-	int small3_x = 6;
-	int small4_x = 427; 
-	int small5_x = 427;
-	int small6_x = 427;
+	int small1_x;
+	int small2_x;
+	int small3_x;
+	int small4_x;
+	int small5_x;
+	int small6_x;
 
-	int pos1_x = 81;
-	int pos2_x = 163;
-	int pos3_x = 243;
-	int pos4_x = 327;
+	int pos1_x;
+	int pos2_x;
+	int pos3_x;
+	int pos4_x;
 
-	int pos5_x = 81;
-	int pos6_x = 163;
-	int pos7_x = 243;
-	int pos8_x = 327;
+	int pos5_x;
+	int pos6_x;
+	int pos7_x;
+	int pos8_x;
 
-	int pos9_x = 81;
-	int pos10_x = 163;
-	int pos11_x = 243;
-	int pos12_x = 327;
+	int pos9_x;
+	int pos10_x;
+	int pos11_x;
+	int pos12_x;
 
-	int small1_y = 151;
-	int small2_y = 151;
-	int small3_y = 151;
-	int small4_y = 29;
-	int small5_y = 29;
-	int small6_y = 29;
+	int small1_y;
+	int small2_y;
+	int small3_y;
+	int small4_y;
+	int small5_y;
+	int small6_y;
 
-	int pos1_y = 35;
-	int pos2_y = 35;
-	int pos3_y = 35;
-	int pos4_y = 35;
+	int pos1_y;
+	int pos2_y;
+	int pos3_y;
+	int pos4_y;
 
-	int pos5_y = 108;
-	int pos6_y = 108;
-	int pos7_y = 108;
-	int pos8_y = 108;
+	int pos5_y;
+	int pos6_y;
+	int pos7_y;
+	int pos8_y;
 
-	int pos9_y = 180;
-	int pos10_y = 180;
-	int pos11_y = 180;
-	int pos12_y = 180;
+	int pos9_y;
+	int pos10_y;
+	int pos11_y;
+	int pos12_y;
 	//0: None, 1: king, 2:general, 3:merchant, 4:prince, 5:hoo
-	int small1 = 0;
-	int small2 = 0;
-	int small3 = 0;
-	int small4 = 0;
-	int small5 = 0;
-	int small6 = 0;
+	int small1;
+	int small2;
+	int small3;
+	int small4;
+	int small5;
+	int small6;
 
-	int pos1 = 0;
-	int pos2 = 0;
-	int pos3 = 0;
-	int pos4 = 0;
+	int pos1;
+	int pos2;
+	int pos3;
+	int pos4;
 
-	int pos5 = 0;
-	int pos6 = 0;
-	int pos7 = 0;
-	int pos8 = 0;
+	int pos5;
+	int pos6;
+	int pos7;
+	int pos8;
 
-	int pos9 = 0;
-	int pos10 = 0;
-	int pos11 = 0;
-	int pos12 = 0;
+	int pos9;
+	int pos10;
+	int pos11;
+	int pos12;
 	
 }board_pos;
 /*
 --------------------------------------------------------------------------------------------
 |                |          |         |         |         |
-|                | pos1     | pos2    | pos3    | pos4    |       small4
+|                | pos1     | pos2    | pos7    | pos8    |       small4
 |                |          |         |         |         |       small5
 |                |          |         |         |         |       small6
 |                |----------|---------|---------|---------|
 |                |          |         |         |         |
-|                | pos5     | pos6    | pos7    | pos8    |
+|                | pos3     | pos4    | pos9    | pos10   |
 |                |          |         |         |         |
 |                |          |         |         |         |
 |  small1        |----------|---------|---------|---------|
 |  small2        |          |         |         |         |
-|  small3        | pos9     | pos10   | pos11   | pos12   |
+|  small3        | pos5     | pos6    | pos11   | pos12   |
 |                |          |         |         |         |
 |                |          |         |         |         |
 ---------------------------------------------------------------------------------------------
@@ -149,80 +149,72 @@ typedef struct board_pos
 XScuGic InterruptController; 	     // Instance of the Interrupt Controller
 static XScuGic_Config *GicConfig;    // The configuration parameters of the controller
 
+// 1. 보드의 정보를 담은 구조체를 선언하고
+board_pos bp = {
+        .small1_x = 6, .small2_x = 6, .small3_x = 6, .small4_x = 427, .small5_x = 427, .small6_x = 427,
+        .pos1_x = 81, .pos2_x = 163, .pos3_x = 243, .pos4_x = 327,
+        .pos5_x = 81, .pos6_x = 163, .pos7_x = 243, .pos8_x = 327,
+        .pos9_x = 81, .pos10_x = 163, .pos11_x = 243, .pos12_x = 327,
+        .small1_y = 151, .small2_y = 151, .small3_y = 151, .small4_y = 29, .small5_y = 29, .small6_y = 29,
+        .pos1_y = 35, .pos2_y = 35, .pos3_y = 35, .pos4_y = 35,
+        .pos5_y = 108, .pos6_y = 108, .pos7_y = 108, .pos8_y = 108,
+        .pos9_y = 180, .pos10_y = 180, .pos11_y = 180, .pos12_y = 180,
+        .small1 = 0, .small2 = 0, .small3 = 0, .small4 = 0, .small5 = 0, .small6 = 0,
+        .pos1 = 3, .pos2 = 0, .pos3 = 1, .pos4 = 4, .pos5 = 2, .pos6 = 0,
+        .pos7 = 0, .pos8 = 2, .pos9 = 4, .pos10 = 1, .pos11 = 0, .pos12 = 3
+    };
 
+    // 구조체 포인터 선언 및 초기화
+//2. 포인터로도 접근할수잇도록 해준다
+board_pos *pBp = &bp;
+
+//3. 누구 차례인지도 여기 저장
+int *turn;
+*turn=0;
+
+//4. 게임이 얼마나 진행되었는지
+int *count;
+*count =0;
 
 
 int main(void)
-{	//interrupt 蹂��닔
-	int Status;
-	//textlcd, sevense蹂��닔
-	XIicPs	Iic;			/**< Instance of the IIC Device */
-	int 	IicStatus;
-	u8		*SendBuffer;	/**< Buffer for Transmitting Data 占쏙옙 8bit*/
-	u8		RecvBuffer[3];	/**< Buffer for Receiving Data   占쏙옙 24bit*/
-
-	int		SegReg;
-	char	TlcdReg_upline[16];
-	char	TlcdReg_downline[16];
-
-	int		i;
-	int		wait;
-
-	NumBytesRead = 0;
-
-	//xil_printf("Interrupt Test\r\n");
-
-	/*
-	 *  Run the Gic configure, specify the Device ID generated in xparameters.h
-	 */
-	/*********************SD card read*********************/
-
-	DataRead(board, fatfs, Path, fil, buffer, data_size, NumBytesRead);
-	DataRead(general, fatfs, Path, fil, buffer, data_size, NumBytesRead);
-	DataRead(x, fatfs, Path, fil, buffer, data_size, NumBytesRead);
-	DataRead(mainscreen, fatfs, Path, fil, buffer, data_size, NumBytesRead);
-	DataRead(setting, fatfs, Path, fil, buffer, data_size, NumBytesRead);
-
-	Status = GicConfigure(INTC_DEVICE_ID);
-	if (Status != XST_SUCCESS) {
-		xil_printf("GIC Configure Failed\r\n");
-		return XST_FAILURE;
-	}
-	DataRead(filename, fatfs, Path, fil, buffer, data_size, NumBytesRead); // �빆�긽 �룞�옉�빐�빞�븯�뒗 肄붾뱶
-	while(TRUE){
-
-	int Data;
-    int R;
-    int G;
-    int B;
-    /****************************TFT-LCD write(RGB565)****************************/
-    for (int i = 0; i < 272; i++){
-
-	
-    	for (int j = 0; j < 240; j++){
-    		// 1
-			Data = (int)buffer[j + 240*i] & 0x0000ffff;
-			//xil_printf("1. Data:%08x\n", Data);
-			R = (Data >> 11) & 0x0000001f;
-			G = Data & 0x000007E0;
-			B = Data & 0x0000001f;
-			Data = (B<<11)| G | R;
-			//xil_printf("2. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
-			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (2*j + 480*i)*4, Data);
-
-			// 2
-			Data = (int)buffer[j + 240*i] >> 16;
-			//xil_printf("3. Data:%08x\n", Data);
-			R = (Data >> 11) & 0x0000001f;
-			G = Data & 0x000007E0;
-			B = Data & 0x0000001f;
-			Data = (B<<11)| G | R;
-			//xil_printf("4. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
-			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (1 + 2*j + 480*i)*4, Data);
-    	}
+{	NumBytesRead = 0;
+   // 1. 처음에는 아무것도 없는 보드판을 출력해준다
+	Res = f_mount(&fatfs, Path, 0);
+    if(Res != FR_OK){
+    	xil_printf("mount_fail\n");
+    	return 0;
     }
 
+    Res = f_open(&fil, board, FA_READ);
+    if(Res){
+        xil_printf("file_open_fail\n");
+        return 0;
+    }
 
+    Res = f_lseek(&fil, 0);
+    if (Res) {
+    	xil_printf("fseek_fail\n");
+    	return 0;
+    }
+
+    Res = f_read(&fil, buffer, data_size, &NumBytesRead);
+    if(Res){
+        xil_printf("data_read_fail\n");
+        return 0;
+    }
+
+    Res = f_close(&fil);
+
+	xil_printf("file_read_success\n");
+
+	
+	tftlcd_print(buffer)  // 화면을 출력해준다
+    
+	//2. 아무것도 없는 보드가 초기세팅이고 
+	while(TRUE){
+
+	
 
 
 	}	// Main loop
@@ -280,15 +272,6 @@ void main_textlcd_sevenseg(void)
 		for(wait = 0; wait < 1200; wait++);
 	}
 }
-void main_tftlcd()
-{
-    NumBytesRead = 0;
-
-
-    
-
-}
-
 
 int GicConfigure(u16 DeviceId)
 {
@@ -345,10 +328,9 @@ int GicConfigure(u16 DeviceId)
 }
 void ServiceRoutine(void *CallbackRef)
 {
-	int pb;
+	char pb;
 	char state;
-	char pb_copy_sw;
-    char pb_copy_bt;
+
 	a= *button_state;
 	pb = PUSHBUTTON_mReadReg(XPAR_PUSHBUTTON_0_S00_AXI_BASEADDR, 0);
 
@@ -356,34 +338,66 @@ void ServiceRoutine(void *CallbackRef)
 	//여기서 0을 데이터 값으로 줘서 눌렸다는것을 알려줫다
 	state = BUTTON_MOORE_mReadReg(XPAR_BUTTON_MOORE_0_S00_AXI_BASEADDR, 0);
 	//BUTTON_MOORE_mWriteReg(XPAR_BUTTON_MOORE_0_S00_AXI_BASEADDR, 0, 0);
+	state=0x0f&state;
 
-	pb_copy_sw=pb>>4;
-	pb_copy_bt=0x0f&pb;
-
-	switch (pb_copy_sw)
+	switch (state)
 	{
-	case 0x7f:
+	case 0://0000 (0) : 내 말 또는 상대 말 선택
+		switch (pb)//11_1000(0x38), 11_0100(0x34)
+		{
+		case 0x38:
+			break;
+
+		case 0x34:
+			break;
+		
+		default:
+			break;
+		}
 		break;
 	
-	case 0x7e:
+	case 1://0001 (1) : 내 말 중 어떤 말을 선택할지
+		switch ()// 1000(king), 0100(general), 0010(merchant), 0001(prince)
+		{
+		case :
+			break;
+		
+		default:
+			break;
+		}
 		break;
 	
-	case 0x7d:
+	case 5://0101 (5) : 내 말의 방향을 선택
+		switch () //11_1000, 11_0100, 11_0010, 11_0001, 10_1000, 10_0100, 10_0010, 10_0001
+		{
+		case :
+			break;
+		
+		default:
+			break;
+		}
 		break;
 	
-	case 0x7b:
+	case 2://0010 (2) : 어떤 포로를 선택할건지
+		switch ()
+		{
+		case :
+			break;
+		
+		default:
+			break;
+		}
 		break;
 	
-	case 0x77:
-		break;
-	
-	case 0x6f:
-		break;
-	
-	case 0x5f:
-		break;
-	
-	case 0x3f:
+	case 6://0110 (6) : 포로를 어디에 배치할건지
+		switch ()
+		{
+		case :
+			break;
+		
+		default:
+			break;
+		}
 		break;
 	
 	default:
@@ -395,7 +409,8 @@ void ServiceRoutine(void *CallbackRef)
 
 
 	
-}
+	}
+	}
 void WriteTLCDReg(char *pRegVal, int val) //pRegVal占쏙옙 16Byte占쏙옙 占썼열
 {
 	int		i = 0;
@@ -408,50 +423,6 @@ void WriteTLCDReg(char *pRegVal, int val) //pRegVal占쏙옙 16Byte占쏙옙 占
 		pRegVal[i] = temp;
 		pRegVal[i+8] = 0x20;
 	}
-}
-
-int ReadRTC(XIicPs Iic, u8 *SendBuffer, u8 *RecvBuffer)
-{
-	int				Status;
-	XIicPs_Config	*Config;
-
-	Config = XIicPs_LookupConfig(XPAR_XIICPS_0_DEVICE_ID);
-	if (Config == NULL)
-	{
-		return XST_FAILURE;
-	}
-
-	Status = XIicPs_CfgInitialize(&Iic, Config, Config->BaseAddress);
-	if (Status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-	XIicPs_SetSClk(&Iic, IIC_SCLK_RATE);
-
-	*SendBuffer		= 0x02;
-	RecvBuffer[0]	= 0x00;
-	RecvBuffer[1]	= 0x00;
-	RecvBuffer[2]	= 0x00;
-
-	Status = XIicPs_MasterSendPolled(&Iic, SendBuffer, 1, IIC_SLAVE_ADDR);
-	if(Status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-	while(XIicPs_BusIsBusy(&Iic))
-	{
-		/* NOP */
-	}
-
-	Status = XIicPs_MasterRecvPolled(&Iic, RecvBuffer, 3, IIC_SLAVE_ADDR);
-	if (Status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-	return XST_SUCCESS;
 }
 
 void DataRead(char filename, FATFS fatfs,TCHAR *Path,FIL fil, u32 *buffer,u32 data_size, u32 NumBytesRead){
@@ -493,4 +464,542 @@ void DataRead(char filename, FATFS fatfs,TCHAR *Path,FIL fil, u32 *buffer,u32 da
 
 }
 
-void buffer_masking(){}
+
+
+void tftlcd_print(u32 * buffer){
+	int Data;
+    int R;
+    int G;
+    int B;
+    /****************************TFT-LCD write(RGB565)****************************/
+    for (int i = 0; i < 272; i++){
+    	for (int j = 0; j < 240; j++){
+    		// 1
+			Data = (int)buffer[j + 240*i] & 0x0000ffff;
+			//xil_printf("1. Data:%08x\n", Data);
+			R = (Data >> 11) & 0x0000001f;
+			G = Data & 0x000007E0;
+			B = Data & 0x0000001f;
+			Data = (B<<11)| G | R;
+			//xil_printf("2. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
+			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (2*j + 480*i)*4, Data);
+
+			// 2
+			Data = (int)buffer[j + 240*i] >> 16;
+			//xil_printf("3. Data:%08x\n", Data);
+			R = (Data >> 11) & 0x0000001f;
+			G = Data & 0x000007E0;
+			B = Data & 0x0000001f;
+			Data = (B<<11)| G | R;
+			//xil_printf("4. R:%08x, G:%08x, B:%08x, Data:%08x\n", R, G, B, Data);
+			Xil_Out32(XPAR_TFTLCD_0_S00_AXI_BASEADDR + (1 + 2*j + 480*i)*4, Data);
+    	}
+    }
+}
+void maskBuffer(u32* buffer, u32* buffer2, int startX, int startY, int maskWidth, int maskHeight) {
+    // Dimensions of buffer
+    int width = 240;
+    int height = 272;
+
+    // Define the region to mask
+    int maskX = startX;
+    int maskY = startY;
+    int maskEndX = maskX + maskWidth;
+    int maskEndY = maskY + maskHeight;
+
+    // Iterate through the buffer
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (i >= maskY && i < maskEndY && j >= maskX && j < maskEndX) {
+                // Calculate index for buffer2
+                int maskIndex = (i - maskY) * maskWidth + (j - maskX);
+                // Replace buffer data with buffer2 data
+                buffer[j + width * i] = buffer2[maskIndex];
+            }
+        }
+    }
+}
+void receiveBuffer(u32 *buffer, char filename[], int size){ //65280, 1800, 450
+
+	static FATFS fatfs;
+	static FIL fil;
+	//static char filename[32] = "lenna.bin";
+	FRESULT Res;
+	TCHAR *Path = "0:/";
+	//u32 * buffer[size];
+	u32 data_size = 4 * size; // 4byte * buffer_size
+	u32 NumBytesRead;
+	NumBytesRead = 0;
+   // 1. 처음에는 아무것도 없는 보드판을 출력해준다
+	Res = f_mount(&fatfs, Path, 0);
+    if(Res != FR_OK){
+    	xil_printf("mount_fail\n");
+    	return 0;
+    }
+
+    Res = f_open(&fil, board, FA_READ);
+    if(Res){
+        xil_printf("file_open_fail\n");
+        return 0;
+    }
+
+    Res = f_lseek(&fil, 0);
+    if (Res) {
+    	xil_printf("fseek_fail\n");
+    	return 0;
+    }
+
+    Res = f_read(&fil, buffer, data_size, &NumBytesRead);
+    if(Res){
+        xil_printf("data_read_fail\n");
+        return 0;
+    }
+
+    Res = f_close(&fil);
+
+	xil_printf("file_read_success\n");
+
+}
+
+void concatenate(board_pos *b, u32 *buffer, u32 *buffer2, u32 *buffer3){
+	//빈 boar를 생성한다
+	receiveBuffer(buffer,"board.bin",65280)
+	//말을 마스킹하는 switch문을 18개 깐다
+	switch (b->small1) //small1
+	{
+	case 0:
+		receiveBuffer(buffer3,"blank_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 1:
+		receiveBuffer(buffer3,"king_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 2:
+		receiveBuffer(buffer3,"general_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 3:
+		receiveBuffer(buffer3,"merchant_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;	
+	case 4:
+		receiveBuffer(buffer3,"prince_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+	default:
+		break;
+	}
+	switch (b->small2) //small2
+	{
+	case 0:
+		receiveBuffer(buffer3,"blank_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 1:
+		receiveBuffer(buffer3,"king_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 2:
+		receiveBuffer(buffer3,"general_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 3:
+		receiveBuffer(buffer3,"merchant_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;	
+	case 4:
+		receiveBuffer(buffer3,"prince_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+	default:
+		break;
+	}
+	switch (b->small3)//small3
+	{
+	case 0:
+		receiveBuffer(buffer3,"blank_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 1:
+		receiveBuffer(buffer3,"king_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 2:
+		receiveBuffer(buffer3,"general_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 3:
+		receiveBuffer(buffer3,"merchant_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;	
+	case 4:
+		receiveBuffer(buffer3,"prince_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+	default:
+		break;
+	}
+	switch (b->small4)//small4
+	{
+	case 0:
+		receiveBuffer(buffer3,"blank_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 1:
+		receiveBuffer(buffer3,"king_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 2:
+		receiveBuffer(buffer3,"general_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 3:
+		receiveBuffer(buffer3,"merchant_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;	
+	case 4:
+		receiveBuffer(buffer3,"prince_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+	default:
+		break;
+	}
+	switch (b->small5) //small5
+	{
+	case 0:
+		receiveBuffer(buffer3,"blank_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 1:
+		receiveBuffer(buffer3,"king_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 2:
+		receiveBuffer(buffer3,"general_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 3:
+		receiveBuffer(buffer3,"merchant_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;	
+	case 4:
+		receiveBuffer(buffer3,"prince_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+	default:
+		break;
+	}
+	switch (b->small6) //small6
+	{
+	case 0:
+		receiveBuffer(buffer3,"blank_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 1:
+		receiveBuffer(buffer3,"king_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 2:
+		receiveBuffer(buffer3,"general_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;
+	case 3:
+		receiveBuffer(buffer3,"merchant_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+		break;	
+	case 4:
+		receiveBuffer(buffer3,"prince_small.bin",450);
+		maskBuffer(buffer,buffer3,b->small1_x,b->small1_y,30,30)
+	default:
+		break;
+	}
+
+	switch (b->pos1) //pos1
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos1_x,b->pos1_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos1_x,b->pos1_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos1_x,b->pos1_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos1_x,b->pos1_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos1_x,b->pos1_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos2) //pos2
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos2_x,b->pos2_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos2_x,b->pos2_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos2_x,b->pos2_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos2_x,b->pos2_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos2_x,b->pos2_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos3) //pos3
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos3_x,b->pos3_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos3_x,b->pos3_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos3_x,b->pos3_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos3_x,b->pos3_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos3_x,b->pos3_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos4) //pos4
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos4_x,b->pos4_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos4_x,b->pos4_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos4_x,b->pos4_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos4_x,b->pos4_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos4_x,b->pos4_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos5) //pos5
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos5_x,b->pos5_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos5_x,b->pos5_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos5_x,b->pos5_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos5_x,b->pos5_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos5_x,b->pos5_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos6) //pos6
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos6_x,b->pos6_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos6_x,b->pos6_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos6_x,b->pos6_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos6_x,b->pos6_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_red.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos6_x,b->pos6_y,60,60)
+	default:
+		break;
+	}
+	
+	switch (b->pos7) //pos7
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos7_x,b->pos7_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos7_x,b->pos7_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos7_x,b->pos7_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos7_x,b->pos7_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos7_x,b->pos7_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos8) //pos8
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos8_x,b->pos8_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos8_x,b->pos8_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos8_x,b->pos8_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos8_x,b->pos8_y,60,60)
+		break;
+	case 4:
+		receiveBuffer(buffer2,"prince_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos8_x,b->pos8_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos9) //pos9
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos9_x,b->pos9_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos9_x,b->pos9_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos9_x,b->pos9_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos9_x,b->pos9_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos9_x,b->pos9_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos10) //pos10
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos10_x,b->pos10_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos10_x,b->pos10_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos10_x,b->pos10_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos10_x,b->pos10_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos10_x,b->pos10_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos11) //pos11
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos11_x,b->pos11_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos11_x,b->pos11_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos11_x,b->pos11_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos11_x,b->pos11_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos11_x,b->pos11_y,60,60)
+	default:
+		break;
+	}
+	switch (b->pos12) //pos12
+
+	{
+	case 0:
+		receiveBuffer(buffer2,"blank_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos12_x,b->pos12_y,60,60)
+		break;
+	case 1:
+		receiveBuffer(buffer2,"king_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos12_x,b->pos12_y,60,60)
+		break;
+	case 2:
+		receiveBuffer(buffer2,"general_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos12_x,b->pos12_y,60,60)
+		break;
+	case 3:
+		receiveBuffer(buffer2,"merchant_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos12_x,b->pos12_y,60,60)
+		break;	
+	case 4:
+		receiveBuffer(buffer2,"prince_green.bin",1800);
+		maskBuffer(buffer,buffer2,b->pos12_x,b->pos12_y,60,60)
+	default:
+		break;
+	}
+
+
+}
