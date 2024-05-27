@@ -58,6 +58,7 @@ int *button_state = 0;
 //0: 留�,�룷濡쒖꽑�깮 �긽�깭, 1:留먯꽑�깮�긽�깭, 2:諛⑺뼢�꽑�깮 �긽�깭, 3:蹂대뱶�쐞移� �꽑�깮�긽�깭
 typedef struct board_pos
 {
+	//parameter of board postion
 	int small1_x;
 	int small2_x;
 	int small3_x;
@@ -101,6 +102,8 @@ typedef struct board_pos
 	int pos10_y;
 	int pos11_y;
 	int pos12_y;
+	//parameter of board position
+
 	//0: None, 1: king, 2:general, 3:merchant, 4:prince, 5:hoo
 	int small1;
 	int small2;
@@ -109,36 +112,50 @@ typedef struct board_pos
 	int small5;
 	int small6;
 
-	int pos1;
-	int pos2;
-	int pos3;
-	int pos4;
+	int king_red_x;
+	int general_red_x;
+	int merchant_red_x;
+	int prince_red_x;
 
-	int pos5;
-	int pos6;
-	int pos7;
-	int pos8;
+	int king_green_x;
+	int general_green_x;
+	int merchant_green_x;
+	int prince_green_x;
 
-	int pos9;
-	int pos10;
-	int pos11;
-	int pos12;
+	int king_red_y;
+	int general_red_y;
+	int merchant_red_y;
+	int prince_red_y;
+
+	int king_green_y;
+	int general_green_y;
+	int merchant_green_y;
+	int prince_green_y;
+	char pos1[32];
+	char pos1[32];
+	char pos1[32];
+	char pos1[32];
+
 	
+	int chosen;
 }board_pos;
+//------------------------------------------------
+
+//------------------------------------------------
 /*
 --------------------------------------------------------------------------------------------
 |                |          |         |         |         |
-|                | pos1     | pos2    | pos7    | pos8    |       small4
+|                | pos1     | pos2    | pos3    | pos4    |       small4
 |                |          |         |         |         |       small5
 |                |          |         |         |         |       small6
 |                |----------|---------|---------|---------|
 |                |          |         |         |         |
-|                | pos3     | pos4    | pos9    | pos10   |
+|                | pos5     | pos6    | pos7    | pos8    |
 |                |          |         |         |         |
 |                |          |         |         |         |
 |  small1        |----------|---------|---------|---------|
 |  small2        |          |         |         |         |
-|  small3        | pos5     | pos6    | pos11   | pos12   |
+|  small3        | pos9     | pos10   | pos11   | pos12   |
 |                |          |         |         |         |
 |                |          |         |         |         |
 ---------------------------------------------------------------------------------------------
@@ -160,17 +177,17 @@ board_pos bp = {
         .pos5_y = 108, .pos6_y = 108, .pos7_y = 108, .pos8_y = 108,
         .pos9_y = 180, .pos10_y = 180, .pos11_y = 180, .pos12_y = 180,
         .small1 = 0, .small2 = 0, .small3 = 0, .small4 = 0, .small5 = 0, .small6 = 0,
-        .pos1 = 3, .pos2 = 0, .pos3 = 1, .pos4 = 4, .pos5 = 2, .pos6 = 0,
-        .pos7 = 0, .pos8 = 2, .pos9 = 4, .pos10 = 1, .pos11 = 0, .pos12 = 3
-    };
+        .king_red = 5, .general_red = 9, .merchant_red = 1, .prince_red = 6,
+		.king_green = 8, .general_green = 4, .merchant_green = 12, .prince_green = 7,
+		.chosen = 0
+    };//0: None, 1: king, 2:general, 3:merchant, 4:prince, 5:hoo
 
     // 구조체 포인터 선언 및 초기화
 //2. 포인터로도 접근할수잇도록 해준다
 board_pos *pBp = &bp;
 
 //3. 누구 차례인지도 여기 저장
-int *turn;
-*turn=0;
+int turn=0;
 
 //4. 게임이 얼마나 진행되었는지
 int *count;
@@ -327,7 +344,8 @@ int GicConfigure(u16 DeviceId)
 	return XST_SUCCESS;
 }
 void ServiceRoutine(void *CallbackRef)
-{
+{	
+	int position;
 	char pb;
 	char state;
 
@@ -339,8 +357,107 @@ void ServiceRoutine(void *CallbackRef)
 	state = BUTTON_MOORE_mReadReg(XPAR_BUTTON_MOORE_0_S00_AXI_BASEADDR, 0);
 	//BUTTON_MOORE_mWriteReg(XPAR_BUTTON_MOORE_0_S00_AXI_BASEADDR, 0, 0);
 	state=0x0f&state;
-
+	if (turn==0){ //왼쪽플레이어차례
 	switch (state)
+	{
+	case 0://0000 (0) : 내 말 또는 포로 선택
+		switch (pb)//11_1000(0x38), 11_0100(0x34)
+		{
+		case 0xf8:
+			//내 말을 선택하겟다는 메세지 출력
+			break;
+
+		case 0xf4:
+			//포로를 선택하겟다는 메세지 출력
+			break;
+		
+		default:
+			//잘못된 입력이
+			break;
+		}
+		break;
+	
+	case 1://0001 (1) : 내 말 중 어떤 말을 선택할지
+		switch (pb)// 1000(king), 0100(general), 0010(merchant), 0001(prince)
+		{
+		case 0xf8:
+			pBp->chosen = 1;
+			break;
+		
+		case 0xf4:
+			pBp->chosen = 2;
+			break;
+		
+		case 0xf2:
+			pBp->chosen = 3;
+			break;
+		case 0xf1:
+			pBp->chosen = 4;
+			break;
+		
+		default:
+			break;
+		}
+		break;
+	
+	case 5://0101 (5) : 내 말의 방향을 선택
+		switch (pBp->chosen) //111_1111_1000, 11_0100, 11_0010, 11_0001, 10_1000, 10_0100, 10_0010, 10_0001
+		{
+		case 1:
+			king_red k;
+			position = pBp->king_red; //return king position by number
+			//through position variable, check available position ->make it with fuction
+			break;
+		case 2:
+			general_red g;
+			break;
+		case 3:
+			merchant_red m;
+			break;
+		case 4:
+			prince_red p;
+			break;
+		default:
+			break;
+		}
+		break;
+	
+	case 2://0010 (2) : 어떤 포로를 선택할건지
+		switch (pBp->chosen)// 0100(general), 0010(merchant), 0001(prince)
+		{
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		
+		default:
+			break;
+		}
+		break;
+	
+	case 6://0110 (6) : 포로를 어디에 배치할건지
+		switch ()//11_1000, 11_0100, 11_0010, 11_0001, 10_1000, 10_0100, 10_0010, 10_0001,00_1000, 00_0100, 00_0010, 00_0001
+		
+
+		{
+		case :
+			break;
+		
+		default:
+			break;
+		}
+		break;
+	
+	default:
+		break;
+	}
+	}
+	else{
+switch (state)
 	{
 	case 0://0000 (0) : 내 말 또는 상대 말 선택
 		switch (pb)//11_1000(0x38), 11_0100(0x34)
@@ -379,7 +496,7 @@ void ServiceRoutine(void *CallbackRef)
 		break;
 	
 	case 2://0010 (2) : 어떤 포로를 선택할건지
-		switch ()
+		switch ()// 0100(general), 0010(merchant), 0001(prince)
 		{
 		case :
 			break;
@@ -390,7 +507,9 @@ void ServiceRoutine(void *CallbackRef)
 		break;
 	
 	case 6://0110 (6) : 포로를 어디에 배치할건지
-		switch ()
+		switch ()//11_1000, 11_0100, 11_0010, 11_0001, 10_1000, 10_0100, 10_0010, 10_0001,
+		
+		 00_1000, 00_0100, 00_0010, 00_0001
 		{
 		case :
 			break;
@@ -402,10 +521,8 @@ void ServiceRoutine(void *CallbackRef)
 	
 	default:
 		break;
+
 	}
-	int state=0;
-	if (((pb & 1) == 1)&&((pb & 16) == 1)){
-		xil_printf("S1 Switch is pushed\r\n");
 
 
 	
@@ -1000,6 +1117,20 @@ void concatenate(board_pos *b, u32 *buffer, u32 *buffer2, u32 *buffer3){
 	default:
 		break;
 	}
+
+
+}
+
+int numArr[3][4] = {
+    {3,0,0,22},
+	{1,4,44,11},
+	{2,0,0,33}}; 
+
+void available_postion(board_pos *b,int *postion,int up){
+	//
+	up-=1;
+	postion[up-4]!=0
+	postion[up]
 
 
 }
