@@ -1,0 +1,5 @@
+set_property IOSTANDARD "LVCMOS33" [get_ports "pb_0[*]"]
+set_property PACKAGE_PIN "AA19" [get_ports "pb_0[3]"]
+set_property PACKAGE_PIN "Y19" [get_ports "pb_0[2]"]
+set_property PACKAGE_PIN "AA18" [get_ports "pb_0[1]"]
+set_property PACKAGE_PIN "Y18" [get_ports "pb_0[0]"]
