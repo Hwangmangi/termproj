@@ -1,0 +1,14 @@
+void DisplayScoreAndState(int score, int state)
+{
+    char TlcdReg_upline[16];
+    char TlcdReg_downline[16];
+
+    sprintf(TlcdReg_upline, "score: %d     ", score);
+    sprintf(TlcdReg_downline, "state: %d     ", state);
+
+    for (int i = 0; i < 4; i++)
+    {
+        TEXTLCD_mWriteReg(XPAR_TEXTLCD_0_S00_AXI_BASEADDR, i * 4, (TlcdReg_upline[i * 4] << 24) + (TlcdReg_upline[i * 4 + 1] << 16) + (TlcdReg_upline[i * 4 + 2] << 8) + TlcdReg_upline[i * 4 + 3]);
+        TEXTLCD_mWriteReg(XPAR_TEXTLCD_0_S00_AXI_BASEADDR, i * 4 + 16, (TlcdReg_downline[i * 4] << 24) + (TlcdReg_downline[i * 4 + 1] << 16) + (TlcdReg_downline[i * 4 + 2] << 8) + TlcdReg_downline[i * 4 + 3]);
+    }
+}
