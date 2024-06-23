@@ -11,10 +11,9 @@ set_property PACKAGE_PIN "Y19" [get_ports "pb_0[2]"]
 set_property PACKAGE_PIN "AA18" [get_ports "pb_0[1]"]
 set_property PACKAGE_PIN "Y18" [get_ports "pb_0[0]"]
 
-set_property IOSTANDARD "LVCMOS33" [get_ports "ds_0[*]"]
-set_property PACKAGE_PIN "Y21" [get_ports "ds_0[0]"]
-set_property PACKAGE_PIN "Y20" [get_ports "ds_0[1]"]
 
+set_property IOSTANDARD "LVCMOS33" [get_ports "clk_0"]
+set_property PACKAGE_PIN "M19" [get_ports "clk_0"]
 
 set_property IOSTANDARD "LVCMOS33" [get_ports "opclk_0"]
 set_property PACKAGE_PIN "L17" [get_ports "opclk_0"]
@@ -54,7 +53,6 @@ set_property IOSTANDARD "LVCMOS33" [get_ports "TFTLCD_Tpower_0"]
 set_property PACKAGE_PIN "W22" [get_ports "TFTLCD_Tpower_0"]
 
 create_clock -period 40 -name clk -waveform {0.000 20} [get_ports clk_0]
-
 
 
 set_property IOSTANDARD "LVCMOS33" [get_ports "lcd_rs_0"]
